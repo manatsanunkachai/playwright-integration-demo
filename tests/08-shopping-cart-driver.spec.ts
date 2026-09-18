@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 
 // =====================================================
-// DRIVER สำหรับเรียก Shopping Card
+// DRIVER สำหรับเรียก Inventory
 // =====================================================
 
 async function driverOpenInventory(
@@ -24,7 +24,9 @@ async function driverOpenInventory(
 
   const page = await context.newPage();
 
-  await page.goto('https://www.saucedemo.com/inventory.html');
+  await page.goto(
+    'https://www.saucedemo.com/inventory.html'
+  );
 
   await expect(
     page.locator('.inventory_list')
@@ -39,17 +41,31 @@ test('Shopping Card DRIVER', async ({ browser }) => {
 
   try {
 
+    // =================================================
+    // Driver เรียก Inventory
+    // =================================================
+
     const page = await driverOpenInventory(context);
 
-    await page.locator(
-      '[data-test="add-to-cart-sauce-labs-backpack"]'
-    ).click();
+    // =================================================
+    // Inventory จริง
+    // =================================================
 
     await expect(
-      page.locator('.shopping_cart_badge')
-    ).toHaveText('1');
+      page.locator('.inventory_item')
+    ).toHaveCount(6);
 
-    await page.locator('.shopping_cart_link').click();
+    // =================================================
+    // เรียก Shopping Card
+    // =================================================
+
+    await page
+      .locator('[data-test="add-to-cart-sauce-labs-backpack"]')
+      .click();
+
+    await page
+      .locator('.shopping_cart_link')
+      .click();
 
     await expect(
       page.locator('.cart_item')
